@@ -26,20 +26,20 @@ func TestOne(t *testing.T) {
 func TestCal(t *testing.T) {
 	testCases := []struct {
 		desc   string
-		symbol rune
+		op     rune
 		values []int
 		exp    int
 		err    string
 	}{
 		{
 			desc:   "plus",
-			symbol: '+',
+			op:     '+',
 			values: []int{1, 3, 5},
 			exp:    9,
 		},
 		{
 			desc:   "prod",
-			symbol: '*',
+			op:     '*',
 			values: []int{1, 3, 5},
 			exp:    15,
 		},
@@ -51,7 +51,7 @@ func TestCal(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			result, err := cal(tC.symbol, tC.values)
+			result, err := cal(tC.op, tC.values)
 			if err != nil && err.Error() != tC.err {
 				t.Errorf("got %v, expected %v", err, tC.err)
 			}
