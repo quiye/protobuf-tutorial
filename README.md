@@ -13,3 +13,9 @@ go get -u github.com/golang/protobuf/protoc-gen-go
 sudo apt  install protobuf-compiler
 protoc -I=api --go_out=api api/formula.proto
 ```
+
+## test
+
+```
+gotest ./... -v 
+```
