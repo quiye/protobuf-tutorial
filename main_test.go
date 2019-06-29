@@ -1,8 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/golang/protobuf/proto"
+
+	pb "github.com/quiye/protobuf-tutorial/api"
 )
 
 func TestHandler(t *testing.T) {
@@ -12,6 +17,27 @@ func TestHandler(t *testing.T) {
 
 	if rec.Body.String() != "Hello, World\n" {
 		t.Error()
+	}
+}
+
+func TestCalcPBHandler(t *testing.T) {
+	rf := &pb.Formula{
+		OpString: "*",
+		Values:   []int32{9, 9},
+	}
+
+	b, err := proto.Marshal(rf)
+	if err != nil {
+		t.Error(err)
+	}
+	reqdata := bytes.NewReader(b)
+
+	req := httptest.NewRequest("GET", "/hello", reqdata)
+	rec := httptest.NewRecorder()
+	calcPBHandler(rec, req)
+
+	if rec.Body.String() != "81\n" {
+		t.Error(rec.Body.String())
 	}
 }
 
@@ -27,25 +53,25 @@ func TestCal(t *testing.T) {
 	testCases := []struct {
 		desc   string
 		op     rune
-		values []int
-		exp    int
+		values []int32
+		exp    int32
 		err    string
 	}{
 		{
 			desc:   "plus",
 			op:     '+',
-			values: []int{1, 3, 5},
+			values: []int32{1, 3, 5},
 			exp:    9,
 		},
 		{
 			desc:   "prod",
 			op:     '*',
-			values: []int{1, 3, 5},
+			values: []int32{1, 3, 5},
 			exp:    15,
 		},
 		{
 			desc:   "empty",
-			values: []int{},
+			values: []int32{},
 			err:    "values must be a non empty list",
 		},
 	}
