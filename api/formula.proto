@@ -1,0 +1,7 @@
+syntax = "proto3";
+package formula;
+
+message Formula {
+  string op_string = 1;
+  repeated int32 values = 2;
+}
