@@ -22,3 +22,42 @@ func TestOne(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestCal(t *testing.T) {
+	testCases := []struct {
+		desc   string
+		symbol rune
+		values []int
+		exp    int
+		err    string
+	}{
+		{
+			desc:   "plus",
+			symbol: '+',
+			values: []int{1, 3, 5},
+			exp:    9,
+		},
+		{
+			desc:   "prod",
+			symbol: '*',
+			values: []int{1, 3, 5},
+			exp:    15,
+		},
+		{
+			desc:   "empty",
+			values: []int{},
+			err:    "values must be a non empty list",
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			result, err := cal(tC.symbol, tC.values)
+			if err != nil && err.Error() != tC.err {
+				t.Errorf("got %v, expected %v", err, tC.err)
+			}
+			if result != tC.exp {
+				t.Errorf("got %v, expected %v", result, tC.exp)
+			}
+		})
+	}
+}
