@@ -2,12 +2,13 @@ syntax = "proto3";
 package api;
 
 message NestFormula {
-  enum FormulaType {
-    MONO_FORMULA = 0;
-    POLY_FORMULA = 1;
+  oneof elements {
+    int32 mono = 1;
+    PolyFormula poly = 2;
   }
+}
+
+message PolyFormula {
   string op_string = 1;
-  repeated NestFormula poly = 2;
-  int32 mono = 3;
-  FormulaType type = 4;
+  repeated NestFormula nest_formulas = 2;
 }

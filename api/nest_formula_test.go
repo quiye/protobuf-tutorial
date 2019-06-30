@@ -3,34 +3,43 @@ package api
 import (
 	"testing"
 
-	"github.com/golang/protobuf/proto"
+	proto "github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
 )
 
 func TestNestFormula(t *testing.T) {
 
 	f1 := &NestFormula{
-		Type: NestFormula_MONO_FORMULA,
-		Mono: 11,
+		Elements: &NestFormula_Mono{
+			Mono: 11,
+		},
 	}
+
 	f2 := &NestFormula{
-		Type:     NestFormula_POLY_FORMULA,
-		OpString: "*",
-		Poly:     []*NestFormula{f1, f1},
+		Elements: &NestFormula_Poly{
+			Poly: &PolyFormula{
+				OpString:     "*",
+				NestFormulas: []*NestFormula{f1, f1, f1},
+			},
+		},
 	}
 	f3 := &NestFormula{
-		Type: NestFormula_MONO_FORMULA,
-		Mono: 44,
+		Elements: &NestFormula_Mono{
+			Mono: 44,
+		},
 	}
 	f4 := &NestFormula{
-		Type:     NestFormula_POLY_FORMULA,
-		OpString: "+",
-		Poly:     []*NestFormula{f2, f3},
+		Elements: &NestFormula_Poly{
+			Poly: &PolyFormula{
+				OpString:     "+",
+				NestFormulas: []*NestFormula{f2, f3},
+			},
+		},
 	}
 
 	s := f4.String()
 
-	exp := `op_string:"+" poly:<op_string:"*" poly:<mono:11 > poly:<mono:11 > type:POLY_FORMULA > poly:<mono:44 > type:POLY_FORMULA `
+	exp := `poly:<op_string:"+" nest_formulas:<poly:<op_string:"*" nest_formulas:<mono:11 > nest_formulas:<mono:11 > nest_formulas:<mono:11 > > > nest_formulas:<mono:44 > > `
 	if s != exp {
 		t.Error(s)
 	}
@@ -45,8 +54,20 @@ func TestNestFormula(t *testing.T) {
 		t.Error(err)
 	}
 
-	ans.Poly[1].XXX_sizecache = 2 // need
-	if diff := cmp.Diff(f4.Poly[1], ans.Poly[1]); diff != "" {
+	removeSizecache(ans)
+	removeSizecache(f4)
+	if diff := cmp.Diff(f4, ans); diff != "" {
 		t.Errorf(diff)
+	}
+}
+
+func removeSizecache(p *NestFormula) {
+	p.XXX_sizecache = 0
+	switch x := p.Elements.(type) {
+	case *NestFormula_Poly:
+		x.Poly.XXX_sizecache = 999
+		for _, f := range x.Poly.NestFormulas {
+			removeSizecache(f)
+		}
 	}
 }
