@@ -41,6 +41,7 @@ func calcHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	fmt.Printf("calcHandler: size %d\n", len(b))
 
 	f := formula{}
 	if err := json.Unmarshal(b, &f); err != nil {
@@ -70,6 +71,7 @@ func calcPBHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	fmt.Printf("calcPBHandler: size %d\n", len(b))
 
 	pbf := &pb.Formula{}
 	if err := proto.Unmarshal(b, pbf); err != nil {

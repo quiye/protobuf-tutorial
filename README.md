@@ -2,8 +2,24 @@
 
 ## json formula
 
+start server
+
 ```
-curl http://localhost:8080 -d '{"op":"*","args":[1,2,3,6]}'
+go run main.go
+```
+
+server app outputs length of binary request
+
+### calc handler
+
+```
+curl http://localhost:8080/calc -d '{"op":"*","args":[1,2,3,6]}'
+```
+
+### calc ProtoBuf handler
+
+```
+go run test/protobuf_requestor.go
 ```
 
 ## protobuf compile
@@ -11,7 +27,7 @@ curl http://localhost:8080 -d '{"op":"*","args":[1,2,3,6]}'
 ```
 go get -u github.com/golang/protobuf/protoc-gen-go
 sudo apt  install protobuf-compiler
-protoc -I=api --go_out=api api/formula.proto
+protoc -I=api --go_out=api api/*.proto
 ```
 
 ## test
