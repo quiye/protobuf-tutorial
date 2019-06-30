@@ -10,27 +10,23 @@ import (
 func TestNestFormula(t *testing.T) {
 
 	f1 := &NestFormula{
-		Elements: &NestFormula_Mono{
-			Mono: 11,
-		},
+		Elements: &NestFormula_Mono{11},
 	}
 
 	f2 := &NestFormula{
 		Elements: &NestFormula_Poly{
-			Poly: &PolyFormula{
+			&PolyFormula{
 				OpString:     "*",
 				NestFormulas: []*NestFormula{f1, f1, f1},
 			},
 		},
 	}
 	f3 := &NestFormula{
-		Elements: &NestFormula_Mono{
-			Mono: 44,
-		},
+		Elements: &NestFormula_Mono{44},
 	}
 	f4 := &NestFormula{
 		Elements: &NestFormula_Poly{
-			Poly: &PolyFormula{
+			&PolyFormula{
 				OpString:     "+",
 				NestFormulas: []*NestFormula{f2, f3},
 			},
