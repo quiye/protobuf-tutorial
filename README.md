@@ -14,12 +14,16 @@ server app outputs length of binary request
 
 ```
 curl http://localhost:8080/calc -d '{"op":"*","args":[1,2,3,6]}'
+# or
+curl http://localhost:8080/calc -d @sample.json
 ```
 
 ### calc ProtoBuf handler
 
 ```
-go run test/protobuf_requestor.go  # or `curl --data-binary @dat http://localhost:8080/calcpb`
+go run test/protobuf_requestor.go
+# or 
+curl http://localhost:8080/calcpb --data-binary @dat
 ```
 
 ## protobuf compile

@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/protobuf/proto"
-
 	pb "github.com/quiye/protobuf-tutorial/api"
 )
 
@@ -34,7 +34,7 @@ func TestCalcPBHandler(t *testing.T) {
 
 	req := httptest.NewRequest("GET", "/hello", reqdata)
 	rec := httptest.NewRecorder()
-	calcPBHandler(rec, req)
+	calcPBHandler(false)(rec, req)
 
 	if rec.Body.String() != "81\n" {
 		t.Error(rec.Body.String())
@@ -85,5 +85,40 @@ func TestCal(t *testing.T) {
 				t.Errorf("got %v, expected %v", result, tC.exp)
 			}
 		})
+	}
+}
+
+func BenchmarkCalcPBHandler(b *testing.B) {
+
+	rf := &pb.Formula{
+		OpString: "*",
+		Values:   []int32{9, 9, 9, 9, 9},
+	}
+
+	bn, _ := proto.Marshal(rf)
+
+	rec := httptest.NewRecorder()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		reqdata := bytes.NewReader(bn)
+		req := httptest.NewRequest("GET", "/hello", reqdata)
+		calcPBHandler(false)(rec, req)
+	}
+}
+func BenchmarkCalcHandler(b *testing.B) {
+
+	rf := &formula{
+		OpString: "*",
+		Args:     []int32{9, 9, 9, 9, 9},
+	}
+
+	bn, _ := json.Marshal(rf)
+
+	rec := httptest.NewRecorder()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		reqdata := bytes.NewReader(bn)
+		req := httptest.NewRequest("GET", "/hello", reqdata)
+		calcHandler(false)(rec, req)
 	}
 }
